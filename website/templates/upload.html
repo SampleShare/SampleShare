@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Sample</title>
+    <style>
+        /* Basic styling for drag-and-drop area */
+        #drop-zone {
+            width: 70%;
+            height: 150px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .file-item {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upload Samples</h1>
+
+    <div id="drop-zone">Drag and drop files here</div>
+    <ul id="file-list"></ul>
+
+    <form id="SampleUploadForm" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>
+            <input type="checkbox" name="is_public" id="is-public">
+            Public?
+        </label>
+        <br><br>
+        <button type="submit" id="submit-btn">Submit</button>
+        <button type="button" onclick="window.location.href='/'">Cancel</button>
+    </form>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileList = document.getElementById('file-list');
+        let files = [];  // Store files as they are added
+
+        // Handle drag-and-drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'green';  // Highlight zone
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#ccc';  // Revert border
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ccc';  // Revert border
+
+            const droppedFiles = Array.from(e.dataTransfer.files);
+            droppedFiles.forEach(file => validateAndAddFile(file));
+        });
+
+        // Validate file type and size before adding to the list
+        function validateAndAddFile(file) {
+            const validExtensions = ['.mp3', '.wav'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const validType = validExtensions.includes('.' + fileExtension);
+
+            if (!validType) {
+                alert(`Invalid file type: ${file.name}. Only .mp3 or .wav files are accepted.`);
+                return;
+            }
+
+            const audio = document.createElement('audio');
+            const fileURL = URL.createObjectURL(file);
+
+            audio.src = fileURL;
+            audio.addEventListener('loadedmetadata', function () {
+                const duration = audio.duration;
+
+                if (duration > 6) {
+                    alert(`File is too long: ${file.name}. Must be less than 6 seconds.`);
+                    URL.revokeObjectURL(fileURL);  // Clean up URL reference
+                } 
+                else {
+                    files.push(file);  // Add to array if valid
+                    displayFileList();
+                }
+            });
+
+            audio.onerror = function() {
+                alert(`Could not load audio file: ${file.name}.`);
+                URL.revokeObjectURL(fileURL);  // Clean up URL reference
+            };
+        }
+
+        // Display list of files
+        function displayFileList() {
+            fileList.innerHTML = '';
+            files.forEach((file, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'file-item';
+                listItem.textContent = file.name + ' ';
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.onclick = () => removeFile(index);
+                listItem.appendChild(removeButton);
+                fileList.appendChild(listItem);
+            });
+        }
+
+        // Remove file from the list
+        function removeFile(index) {
+            files.splice(index, 1);
+            displayFileList();
+        }
+    </script>
+
+</body>
+{% endblock %}

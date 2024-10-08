@@ -1,9 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import Http404
-from .models import UserProfile
+from django.http import Http404, JsonResponse
+from .models import UserProfile, Sample
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm
+from .forms import SignUpForm, SampleUploadForm
+import mutagen
+from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
+import os
 
 # Create your views here.
 def home(request):
@@ -71,3 +75,65 @@ def register_user(request):
         form = SignUpForm()
         return render(request, 'register.html', {'form':form})
     return render(request, 'register.html', {'form':form})
+
+
+#Upload Samples
+def move_uploaded_sample(upload, userProfiles):
+    temp_path = f'/tmp/{uploaded_sample.name}'
+    
+    with open(temp_path, 'wb+') as temp_file:
+        for chunk in uploaded_sample.chunks():
+            temp_file.write(chunk)
+
+    file_extension = os.path.splitext(uploaded_sample.name)[1]
+    is_valid, error_message = validate_length(temp_path, file_extension)
+    if not is_valid:
+        os.remove(temp_path)
+        return False, error_message
+
+    final_path = f'media/uploads/{userProfiles}/{uploaded_sample.name}'
+    with open(final_path, 'wb+') as final_file:
+        for chunk in uploaded_sample.chunks():
+            final_file.write(chunk)
+
+    return final_path
+
+def validate_length(temp_path, file_extension):
+    if file_extension.lower() == '.mp3':
+        audio = MP3(temp_path)
+        if audio.info.length > 6.0:
+            return False, 'The Sample must be no longer than 6 seconds.'
+    elif file_extension.lower() == '.wav':
+        audio = WAVE(temp_path)
+        if audio.info.length > 6.0:
+            return False, 'The Sample must be no longer than 6 seconds.'
+    return True, None
+
+def upload(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must be logged in to upload a sample.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        is_public = request.POST.get('is_public') == 'on'  # Global "Public?" checkbox
+        files = request.FILES.getlist('file')  # Get uploaded files
+
+        # Get the UserProfile associated with the logged-in user
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'No profile found for the current user.')
+            return redirect('upload')
+            
+            sample = Sample(
+                userProfile=user_profile,  # Assign logged-in user's profile
+                sampleName=uploaded_file.name,
+                fileLocation=f'/original/path/{uploaded_file.name}',  # Save the original file location
+                isPublic=is_public
+            )
+            sample.save()
+
+        messages.success(request, 'All valid samples were uploaded successfully.')
+        return redirect('upload')
+
+    return render(request, 'upload.html')

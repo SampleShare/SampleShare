@@ -1,9 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import UserProfile 
-
-
+from .models import UserProfile, Sample
 
 
 
@@ -52,3 +50,33 @@ class SignUpForm(UserCreationForm):
 				numberOfFollowers=0  # default to 0
 			)
 		return user
+
+class SampleUploadForm(forms.ModelForm):
+    filelocation = forms.FilePathField(allow_files = True, allow_folders = False, path = 'SampleShare/')
+
+    class Meta:
+        model = Sample
+        fields = ['sampleName', 'fileLocation','isPublic',]
+        widgets = {
+            'fileLocation': forms.TextInput(attrs={'placeholder': 'Enter file path'}),
+			'isPublic': forms.CheckboxInput(),
+        }
+    def clean_file_location(self):
+        file_location = self.cleaned_data.get('fileLocation')
+
+        if not os.path.exists(fileLocation):
+            raise forms.ValidationError('File path does not exist.')
+
+        if not os.path.isfile(fileLocation):
+            raise forms.ValidationError('The path must point to a file, not a directory.')
+        
+        valid_extensions = ['.mp3', '.wav']
+        file_extension = os.path.splitext(fileLocation)[1]
+
+        if file_extension.lower() not in valid_extensions:
+            raise forms.ValidationError(f'Invalid file type. Accepted types: {", ".join(valid_extensions)}')
+
+        if not os.access(file_location, os.R_OK):
+            raise forms.ValidationError('The file is not readable.')
+
+        return file_location
