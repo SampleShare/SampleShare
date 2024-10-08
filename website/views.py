@@ -93,7 +93,7 @@ def upload(request):
         except UserProfile.DoesNotExist:
             messages.error(request, 'No profile found for the current user.')
             return redirect('upload')
-            
+
             sample = Sample(
                 userProfile=user_profile,  # Assign logged-in user's profile
                 sampleName=uploaded_file.name,
