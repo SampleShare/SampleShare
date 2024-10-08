@@ -78,37 +78,6 @@ def register_user(request):
 
 
 #Upload Samples
-def move_uploaded_sample(upload, userProfiles):
-    temp_path = f'/tmp/{uploaded_sample.name}'
-    
-    with open(temp_path, 'wb+') as temp_file:
-        for chunk in uploaded_sample.chunks():
-            temp_file.write(chunk)
-
-    file_extension = os.path.splitext(uploaded_sample.name)[1]
-    is_valid, error_message = validate_length(temp_path, file_extension)
-    if not is_valid:
-        os.remove(temp_path)
-        return False, error_message
-
-    final_path = f'media/uploads/{userProfiles}/{uploaded_sample.name}'
-    with open(final_path, 'wb+') as final_file:
-        for chunk in uploaded_sample.chunks():
-            final_file.write(chunk)
-
-    return final_path
-
-def validate_length(temp_path, file_extension):
-    if file_extension.lower() == '.mp3':
-        audio = MP3(temp_path)
-        if audio.info.length > 6.0:
-            return False, 'The Sample must be no longer than 6 seconds.'
-    elif file_extension.lower() == '.wav':
-        audio = WAVE(temp_path)
-        if audio.info.length > 6.0:
-            return False, 'The Sample must be no longer than 6 seconds.'
-    return True, None
-
 def upload(request):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to upload a sample.')
