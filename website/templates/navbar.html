@@ -11,7 +11,7 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'logout' %}">Log out</a>
         </li>
-        <button type="button" hred="{% url 'upload' %}" class="btn btn-outline-danger">Upload</button>
+        <button type="button" href="{% url 'upload' %}" class="btn btn-outline-danger">Upload</button>
         {% else %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'register' %}">Register</a>
