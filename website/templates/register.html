@@ -1,29 +1,77 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <div class="col-md-6 offset-md-3">      
+<div class="col-md-6 offset-md-3">      
 
-<h1>Register</h1>
-<br/>
-	<form method="POST" action="">
+    <h1>Register</h1>
+    <br/>
+    <form method="POST" action="">
         {% csrf_token %}
 
         {% if form.errors %}
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-              Your Form Has Errors
-              {% for field in form %}
-                {% if field.errors %}
-                    {{ field.errors }}
-                {% endif %}
-              {% endfor %}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                Your Form Has Errors
+                {% for field in form %}
+                    {% if field.errors %}
+                        {{ field.errors }}
+                    {% endif %}
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endif %}
 
         {{ form.as_p }}
-    <br/>
-     <button type="submit" class="btn btn-secondary">Submit</button>
+
+        <!-- Password Requirements Feedback -->
+        <div id="password-requirements" style="display: none; margin-top: 10px;">
+            <p id="length-req" style="color: red;">Your password must contain at least 8 characters.</p>
+            <p id="common-req" style="color: red;">Your password can't be a commonly used password.</p>
+            <p id="numeric-req" style="color: red;">Your password can't be entirely numeric.</p>
+        </div>
+
+        <br/>
+        <button type="submit" class="btn btn-secondary">Submit</button>
     </form>
 
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select the password input field and requirements container
+        const passwordField = document.querySelector('#id_password1');
+        const requirements = document.querySelector('#password-requirements');
+        const lengthReq = document.querySelector('#length-req');
+        const commonReq = document.querySelector('#common-req');
+        const numericReq = document.querySelector('#numeric-req');
+
+        // Add event listener to password field
+        passwordField.addEventListener('input', function() {
+            const password = passwordField.value;
+            requirements.style.display = 'block';
+            
+            // Length Requirement
+            if (password.length >= 8) {
+                lengthReq.style.color = 'green';
+            } else {
+                lengthReq.style.color = 'red';
+            }
+
+            // Common Password Check (basic example with a small list)
+            const commonPasswords = ['password', '123456', 'qwerty']; // Extend this list as needed
+            if (!commonPasswords.includes(password.toLowerCase())) {
+                commonReq.style.color = 'green';
+            } else {
+                commonReq.style.color = 'red';
+            }
+
+            // Numeric Check
+            if (!/^\d+$/.test(password)) {
+                numericReq.style.color = 'green';
+            } else {
+                numericReq.style.color = 'red';
+            }
+        });
+    });
+</script>
+
 {% endblock %}

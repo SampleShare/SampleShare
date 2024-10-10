@@ -95,5 +95,15 @@ def search_user(request):
         else:
             return render(request, 'search_results.html', {'users': None, 'query': query})
         
-        
+def search_view(request):
+    query = request.GET.get('query', '')
+    filter_type = request.GET.get('filter', 'username')
+    
+    if filter_type == 'username':
+        results = UserProfile.objects.filter(user__username__icontains=query)
+    elif filter_type == 'sample':
+        # Logic for filtering by sample will be added once you implement the sample model
+        results = []  # Placeholder for now
+    
+    return render(request, 'your_template.html', {'results': results})      
         
