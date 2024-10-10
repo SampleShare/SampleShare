@@ -20,58 +20,67 @@
             </div>
         {% endif %}
 
-        {{ form.as_p }}
+        {{ form.username.label_tag }} {{ form.username }}
+        {{ form.email.label_tag }} {{ form.email }}
+        {{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}
 
-        <!-- Password Requirements Feedback -->
-        <div id="password-requirements" style="display: none; margin-top: 10px;">
+        <!-- Password field -->
+        {{ form.password1.label_tag }} {{ form.password1 }}
+
+        <!-- Password Requirements Feedback (Positioned directly under the password field) -->
+        <div id="password-requirements" style="display: none; margin-top: 5px;">
             <p id="length-req" style="color: red;">Your password must contain at least 8 characters.</p>
             <p id="common-req" style="color: red;">Your password can't be a commonly used password.</p>
             <p id="numeric-req" style="color: red;">Your password can't be entirely numeric.</p>
         </div>
 
+        <!-- Confirm Password field -->
+        {{ form.password2.label_tag }} {{ form.password2 }}
+
         <br/>
         <button type="submit" class="btn btn-secondary">Submit</button>
+
+        <!-- JavaScript for Real-Time Password Validation (within the form) -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Select the password input field and requirements container
+                const passwordField = document.querySelector('#id_password1');
+                const requirements = document.querySelector('#password-requirements');
+                const lengthReq = document.querySelector('#length-req');
+                const commonReq = document.querySelector('#common-req');
+                const numericReq = document.querySelector('#numeric-req');
+
+                // Add event listener to password field
+                passwordField.addEventListener('input', function() {
+                    const password = passwordField.value;
+                    requirements.style.display = 'block';
+                    
+                    // Length Requirement
+                    if (password.length >= 8) {
+                        lengthReq.style.color = 'green';
+                    } else {
+                        lengthReq.style.color = 'red';
+                    }
+
+                    // Common Password Check (basic example with a small list)
+                    const commonPasswords = ['password', '123456', 'qwerty']; // Extend this list as needed
+                    if (!commonPasswords.includes(password.toLowerCase())) {
+                        commonReq.style.color = 'green';
+                    } else {
+                        commonReq.style.color = 'red';
+                    }
+
+                    // Numeric Check
+                    if (!/^\d+$/.test(password)) {
+                        numericReq.style.color = 'green';
+                    } else {
+                        numericReq.style.color = 'red';
+                    }
+                });
+            });
+        </script>
     </form>
 
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Select the password input field and requirements container
-        const passwordField = document.querySelector('#id_password1');
-        const requirements = document.querySelector('#password-requirements');
-        const lengthReq = document.querySelector('#length-req');
-        const commonReq = document.querySelector('#common-req');
-        const numericReq = document.querySelector('#numeric-req');
-
-        // Add event listener to password field
-        passwordField.addEventListener('input', function() {
-            const password = passwordField.value;
-            requirements.style.display = 'block';
-            
-            // Length Requirement
-            if (password.length >= 8) {
-                lengthReq.style.color = 'green';
-            } else {
-                lengthReq.style.color = 'red';
-            }
-
-            // Common Password Check (basic example with a small list)
-            const commonPasswords = ['password', '123456', 'qwerty']; // Extend this list as needed
-            if (!commonPasswords.includes(password.toLowerCase())) {
-                commonReq.style.color = 'green';
-            } else {
-                commonReq.style.color = 'red';
-            }
-
-            // Numeric Check
-            if (!/^\d+$/.test(password)) {
-                numericReq.style.color = 'green';
-            } else {
-                numericReq.style.color = 'red';
-            }
-        });
-    });
-</script>
 
 {% endblock %}
