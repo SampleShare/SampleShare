@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<br/>
+
+<div class="card">
+    <div class="card-header"><strong>
+          Post
+          </strong>
+    </div>
+    <div class="card-body">
+
+    <p class="card-text">
+    <strong>Text: </strong>{{ user_post.postText }}</p> 
+    <!-- This is where the sample would be displayed -->
+
+
+</div>
+</div>
+{% if user.userprofile.id == user_post.userProfiles.id %}
+<br/><br/>
+<a href="{% url 'delete_post' user_post.id %}" class="btn btn-danger">Delete</a>
+<a href="{% url 'update_post' user_post.id %}" class="btn btn-secondary">Update</a>
+{% endif %}
+<a href="{% url 'posts' %}" class="btn btn-secondary">Back</a>
+{% endblock %}

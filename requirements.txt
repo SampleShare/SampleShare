@@ -6,3 +6,4 @@ psycopg2-binary==2.9.9
 PyMySQL==1.1.1
 python-decouple==3.8
 sqlparse==0.5.1
+cryptography==43.0.1 

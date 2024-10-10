@@ -20,11 +20,5 @@ venv.bak/
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
-
-<<<<<<< HEAD
 #apple stuff
 .DS_Store
-=======
-
-.DS_Store
->>>>>>> template-profile

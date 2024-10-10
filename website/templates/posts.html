@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
+<h1>Posts</h1>
+<br/>
+
+{% if userPosts %}
+    {% for post in userPosts %}
+    <ul class="list-group">
+        <li class="list-group-item">{{ post.postText }}</li>
+        
+    </ul>
+    <a href="{%url 'user_post' post.id%}" class="btn btn-secondary"> View Post </a>
+    <br/>
+    {% endfor %}
+{% endif %}
+<br/>
+<a href ="{% url 'home'%}" class="btn btn-secondary">back</a>
+
+{% endblock %}

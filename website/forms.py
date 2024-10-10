@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
+from .models import Post
 from .models import UserProfile 
 
 
@@ -35,6 +36,7 @@ class SignUpForm(UserCreationForm):
 		self.fields['password2'].widget.attrs['class'] = 'form-control'
 		self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
 		self.fields['password2'].label = ''
+		self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
 		self.fields['password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'	
 
 	def save(self, commit=True):
@@ -52,3 +54,21 @@ class SignUpForm(UserCreationForm):
 				numberOfFollowers=0  # default to 0
 			)
 		return user
+
+
+
+
+
+#-----------------Post Form-----------------
+class PostForm(forms.ModelForm):
+	class Meta:
+		model = Post
+		fields = ('postText','userProfiles', 'samples')
+
+		widgets = {
+			'postText': forms.TextInput(attrs={'class': 'form-control'}),
+			#'userProfiles': forms.Select(attrs={'class': 'form-control'}),
+			'userProfiles': forms.TextInput(attrs={'class': 'form-control', 'value':'', 'id':'user', 'type':'hidden'}),
+			'sample': forms.Select(attrs={'class': 'form-control'}),
+		}
+#---------------------------------------------------

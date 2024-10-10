@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
+from django.urls import reverse
 
 # Create your models here.
 
@@ -85,10 +85,13 @@ class Post(models.Model):
     # one to many with samples
     samples = models.ForeignKey(Sample, on_delete=models.CASCADE, null=True)
     # Many to Many with user-Profiles
-    userProfiles = models.ManyToManyField(UserProfile, null=True)
+    userProfiles = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return(f"{self.postText} {self.postTimeStamp}")
+    
+    def get_absolute_url(self):
+        return reverse('posts')
 
 # ------Comments------
 # commentMessage = TEXT NOT NULL
