@@ -3,8 +3,8 @@ from django.http import Http404
 from .models import Sample, UserProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
 from .forms import SignUpForm
+from .forms import ProfileForm
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -22,14 +22,14 @@ def page_not_found(request):
     raise Http404("Page not here tho")
 
 
-def profile_page(request, pk):
-     if request.user.is_authenticated:
-         #Look up profiles
-         user_profile = UserProfile.objects.get(id=pk)
-         return render(request, 'profile_page.html', {'user_profile':user_profile})
-     else:
-        messages.success(request, "You must be logged in to view profiles")
-        return redirect('home')
+# def profile_page(request, pk):
+#      if request.user.is_authenticated:
+#          #Look up profiles
+#          user_profile = UserProfile.objects.get(id=pk)
+#          return render(request, 'profile_page.html', {'user_profile':user_profile})
+#      else:
+#         messages.success(request, "You must be logged in to view profiles")
+#         return redirect('home')
 
 
 def profile_page(request, username):
@@ -43,6 +43,20 @@ def profile_page(request, username):
     }
 
     return render(request, 'profile_page.html', context)
+
+
+
+def edit_profile(request):
+    profile = request.user.userprofile  # Access the user's UserProfile instance
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', username=request.user.username)  # Pass username as an argument
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'edit_profile.html', {'form': form})
+
 
 
 
