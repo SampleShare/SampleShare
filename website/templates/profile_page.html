@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}  <!-- Load static files here at the top -->
+
 
 {% block content %}
   <h2>Profile of {{ profile_user.username }}</h2>
   <p>Email: {{ profile_user.email }}</p>
   <p>Bio: {{profile_user.userprofile.bio}}</p>
+
+  {% if profile_user.userprofile.userPhoto %}
+    <!-- Load the user photo from static/images directory -->
+    <img src="{% static 'images/' %}{{ profile_user.userprofile.userPhoto }}" alt="Profile Photo" style="width:150px; height:auto;">
+  {% else %}
+    <!-- Use a default profile picture if no photo is provided -->
+    <img src="{% static 'images/profile_picture_default.jpg' %}" alt="Default Profile Photo" style="width:150px; height:auto;">
+  {% endif %}
+
 
   <!-- Link to Edit Profile -->
   <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>

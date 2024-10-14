@@ -126,8 +126,10 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATICFILES_DIRS = [
-      # Assuming you have a static folder in your root directory
+    BASE_DIR / "static",
+    "/website/static/images",
 ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
