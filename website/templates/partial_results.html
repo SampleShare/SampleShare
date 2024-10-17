@@ -1,0 +1,9 @@
+<div id="search-results">
+    {% for user in results.usernames %}
+        <p>{{ user.username }}</p>
+    {% endfor %}
+    
+    {% for sample in results.samples %}
+        <p>{{ sample.sampleName }}</p>
+    {% endfor %}
+</div>

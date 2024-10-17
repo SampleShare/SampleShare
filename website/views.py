@@ -164,22 +164,24 @@ def search_user(request):
 
 
 
-        
+
 def search_view(request):
-    query = request.GET.get('query', '')
-    filter_type = request.GET.get('filter', 'username')
+    filter_value = request.GET.get('filter', 'all')
+
+    # QuerySets for filtering
+    if filter_value == 'username':
+        results = UserProfile.objects.filter(username__icontains=request.GET.get('q', ''))
+    elif filter_value == 'sample':
+        results = Sample.objects.filter(sample__sampleName__icontains=request.GET.get('q', ''))
+    else:
+        usernames = UserProfile.objects.filter(username__icontains=request.GET.get('q', ''))
+        samples = Sample.objects.filter(sampleName__icontains=request.GET.get('q', ''))
+        results = {'usernames': usernames, 'samples': samples}
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'your_partial_results_template.html', {'results': results})
     
-    if filter_type == 'username':
-        results = UserProfile.objects.filter(user__username__icontains=query)
-    elif filter_type == 'sample':
-        # Logic for filtering by sample will be added once you implement the sample model
-        results = Sample.objects.filter(sample__sampleName__icontains=query, isPublic=True) 
-    
-    return render(request, 'your_template.html', {'results': results})      
-        
-    return render(
-                request, "search_results.html", {"users": None, "query": query}
-            )
+    return render(request, 'search_page.html', {'results': results})
 
 
 # ----------------------------Post Code -------------------------------#
