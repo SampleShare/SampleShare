@@ -101,21 +101,42 @@ def upload(request):
 
 def search_user(request):
     if request.method == "GET":
-        query = request.GET.get(
-            "q"
-        )  # 'q' is the name attribute in your search input field
-        if query:
-            matching_users = User.objects.filter(
-                username__icontains=query
-            )  # Case-insensitive search
-            return render(
-                request,
-                "search_results.html",
-                {"users": matching_users, "query": query},
-            )
-        else:
+        query = request.GET.get("q")
+        filter_type = request.GET.get("filter", "all")
 
-            return render(request, 'search_results.html', {'users': None, 'query': query})
+        if query:
+            if filter_type == "username":
+                # Only search for users
+                matching_users = User.objects.filter(username__icontains=query)
+                matching_samples = []
+            elif filter_type == "sample":
+                # Only search for samples
+                matching_users = []
+                matching_samples = Sample.objects.filter(sampleName__icontains=query, isPublic=True)
+            else:
+                # Search both users and samples
+                matching_users = User.objects.filter(username__icontains=query)
+                matching_samples = Sample.objects.filter(sampleName__icontains=query, isPublic=True)
+
+            # Check if it's an AJAX request (from fetch) and only return the results part
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return render(request, 'partials/search_results_partial.html', {
+                    'users': matching_users,
+                    'samples': matching_samples
+                })
+
+            # For regular requests, return the full template
+            return render(request, 'search_results.html', {
+                'users': matching_users,
+                'samples': matching_samples,
+                'query': query,
+                'filter_type': filter_type
+            })
+
+        return render(request, 'search_results.html', {'users': None, 'samples': None, 'query': query, 'filter_type': filter_type})
+
+
+
         
 def search_view(request):
     query = request.GET.get('query', '')
@@ -125,7 +146,7 @@ def search_view(request):
         results = UserProfile.objects.filter(user__username__icontains=query)
     elif filter_type == 'sample':
         # Logic for filtering by sample will be added once you implement the sample model
-        results = []  # Placeholder for now
+        results = Sample.objects.filter(sample__sampleName__icontains=query, isPublic=True) 
     
     return render(request, 'your_template.html', {'results': results})      
         
