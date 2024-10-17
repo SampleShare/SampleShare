@@ -50,6 +50,25 @@
                 const commonReq = document.querySelector('#common-req');
                 const numericReq = document.querySelector('#numeric-req');
 
+                let commonPasswords = [];
+
+                // Function to load common passwords from a text file
+                async function loadCommonPasswords() {
+                    try {
+                        // Fetch the common passwords file from the static directory
+                        const response = await fetch('/static/image/common-passwords.txt');
+                        const text = await response.text();
+                        // Split the file content into an array (assuming one password per line)
+                        commonPasswords = text.split('\n').map(pw => pw.trim().toLowerCase());
+                    } catch (error) {
+                        console.error("Error fetching common passwords:", error);
+                        return [];
+                    }
+                }
+
+                // Call function to load common passwords
+                loadCommonPasswords();
+
                 // Add event listener to password field
                 passwordField.addEventListener('input', function() {
                     const password = passwordField.value;
@@ -62,9 +81,8 @@
                         lengthReq.style.color = 'red';
                     }
 
-                    // Common Password Check (basic example with a small list)
-                    const commonPasswords = ['password', '123456', 'qwerty']; // Extend this list as needed
-                    if (!commonPasswords.includes(password.toLowerCase())) {
+                    // Common Password Check (using loaded common passwords from file)
+                    if (commonPasswords.length > 0 && !commonPasswords.includes(password.toLowerCase())) {
                         commonReq.style.color = 'green';
                     } else {
                         commonReq.style.color = 'red';
