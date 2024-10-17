@@ -2,9 +2,13 @@
 
 {% block content %}
   <h2>Edit Profile</h2>
-  <form method="post" enctype="multipart/form-data">
+  
+  <form method="post" enctype="multipart/form-data" style="margin-bottom: 20px;">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Save changes</button>
   </form>
+  
+  <!-- Add spacing between the form and the delete button -->
+  <a href="{% url 'delete_account' %}" class="btn btn-danger" style="margin-top: 10px;">Delete Account</a>
 {% endblock %}

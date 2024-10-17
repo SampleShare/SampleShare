@@ -16,9 +16,10 @@ urlpatterns = [
     path("register/", views.register_user, name="register"),
     path("search/", views.search_user, name="search_user"),
     path("profile/<str:username>/", views.profile_page, name="profile"),
+    path("delete-account/", views.delete_account, name="delete_account"),
     # -------Samples/Uploads Links------------#
     path("upload/", views.upload, name="upload"),
-    # path("sample/<int:sample_id>/", views.sample_player, name="sample_player"),
+    path("sample/", views.sample_player, name="sample_player"),
     # -------Posts Links------------#
     path("posts/", views.posts, name="posts"),
     path("user_post/<int:pk>", views.user_post, name="user_post"),
@@ -26,14 +27,12 @@ urlpatterns = [
     path("create_post/", CreatePostView.as_view(), name="create_post"),
     path("update_post/<int:pk>", views.update_post, name="update_post"),
     path("delete_post/<int:pk>", views.delete_post, name="delete_post"),
-    path('edit-profile/', views.edit_profile, name='edit_profile'),
-    #--------Comment Links--------------#
+    path("edit-profile/", views.edit_profile, name="edit_profile"),
+    # --------Comment Links--------------#
     path("create_comment/<int:pk>", views.create_comment, name="create_comment"),
     path("comments/<int:pk>", views.comments, name="comments"),
     path("comment_detail/<int:pk>", views.comment_detail, name="comment_detail"),
     path("update_comment/<int:pk>", views.update_comment, name="update_comment"),
     path("delete_comment/<int:pk>", views.delete_comment, name="delete_comment"),
-    #--------------------------------------#
+    # --------------------------------------#
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-

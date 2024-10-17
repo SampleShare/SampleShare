@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="{% url 'home' %}">SampleShare</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -16,13 +17,16 @@
         </li>
         <!-------------------- Post Code  ----------------->
         <li class="nav-item"></li>
-          <a class="nav-link" href="{% url 'create_post' %}">Create Post</a>
+        <a class="nav-link" href="{% url 'create_post' %}">Create Post</a>
         </li>
         <li class="nav-item"></li>
-          <a class="nav-link" href="{% url 'posts' %}">Posts</a>
+        <a class="nav-link" href="{% url 'posts' %}">Posts</a>
         </li>
         <li class="nav-item"></li>
-          <a class="nav-link" href="{% url 'upload' %}">Upload</a>
+        <a class="nav-link" href="{% url 'upload' %}">Upload</a>
+        </li>
+        <li class="nav-item"></li>
+        <a class="nav-link" href="{% url 'sample_player' %}">Samples</a>
         </li>
 
         <!-------------------------------------------------->
@@ -39,7 +43,7 @@
       <form method="get" action="{% url 'search_user' %}">
         <input type="text" name="q" placeholder="Search for a username">
         <button type="submit" class="btn btn-outline-primary">Search</button>
-      </form> 
+      </form>
     </div>
   </div>
 </nav>

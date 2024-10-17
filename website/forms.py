@@ -102,22 +102,30 @@ class PostForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["bio", "userPhoto"] 
+        fields = ["bio", "userPhoto"]
 
 
 # ---------------------------------------------------
 
 
-#----------------------Comment Code------------------#\
+# ----------------------Comment Code------------------#\
+
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ("commentMessage", "posts", "samples", "userProfile")
-    
+
         widgets = {
             "commentMessage": forms.TextInput(attrs={"class": "form-control"}),
-            "posts": forms.TextInput(attrs={"class": "form-control", "value": "", "id":"post","type": "hidden"}),
+            "posts": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "value": "",
+                    "id": "post",
+                    "type": "hidden",
+                }
+            ),
             "samples": forms.Select(attrs={"class": "form-control"}),
             "userProfile": forms.TextInput(
                 attrs={
@@ -129,5 +137,5 @@ class CommentForm(forms.ModelForm):
             ),
         }
 
-#----------------------------------------------------#
 
+# ----------------------------------------------------#
