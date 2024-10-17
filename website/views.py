@@ -106,24 +106,15 @@ def search_user(request):
 
         if query:
             if filter_type == "username":
-                # Only search for users
                 matching_users = User.objects.filter(username__icontains=query)
                 matching_samples = []
             elif filter_type == "sample":
-                # Only search for samples
                 matching_users = []
                 matching_samples = Sample.objects.filter(sampleName__icontains=query, isPublic=True)
             else:
-                # Search both users and samples
                 matching_users = User.objects.filter(username__icontains=query)
                 matching_samples = Sample.objects.filter(sampleName__icontains=query, isPublic=True)
 
-            # Check if it's an AJAX request (from fetch) and only return the results part
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return render(request, 'partials/search_results_partial.html', {
-                    'users': matching_users,
-                    'samples': matching_samples
-                })
 
             # For regular requests, return the full template
             return render(request, 'search_results.html', {
@@ -134,6 +125,8 @@ def search_user(request):
             })
 
         return render(request, 'search_results.html', {'users': None, 'samples': None, 'query': query, 'filter_type': filter_type})
+
+
 
 
 

@@ -3,67 +3,32 @@
 {% block content %}
 <h2>Search Results for "{{ query }}"</h2>
 
-<!-- Filter Form -->
-<form id="filter-form">
-    <label>
-        <input type="radio" name="filter" value="all" {% if filter_type == "all" %}checked{% endif %}> All
-    </label>
-    <label>
-        <input type="radio" name="filter" value="username" {% if filter_type == "username" %}checked{% endif %}> Username
-    </label>
-    <label>
-        <input type="radio" name="filter" value="sample" {% if filter_type == "sample" %}checked{% endif %}> Sample
-    </label>
-</form>
-<input type="hidden" id="search-query" value="{{ query }}">
+<!-- Results Container -->
+<div id="results-container">
+    <!-- User Results -->
+    {% if users %}
+        <h3>Users</h3>
+        <ul>
+            {% for user in users %}
+                <li><a href="{% url 'profile' user.username %}">{{ user.username }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No users found matching "{{ query }}".</p>
+    {% endif %}
 
-<!-- User Results -->
-{% if users %}
-    <h3>Users</h3>
-    <ul>
-        {% for user in users %}
-            <li><a href="{% url 'profile' user.username %}">{{ user.username }}</a></li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No users found matching "{{ query }}".</p>
-{% endif %}
+    <!-- Sample Results -->
+    {% if samples %}
+        <h3>Samples</h3>
+        <ul>
+            {% for sample in samples %}
+                <li>{{ sample.sampleName }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No samples found matching "{{ query }}".</p>
+    {% endif %}
+</div>
 
-<!-- Sample Results -->
-{% if samples %}
-    <h3>Samples</h3>
-    <ul>
-        {% for sample in samples %}
-            <li>{{ sample.sampleName }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No samples found matching "{{ query }}".</p>
-{% endif %}
 
-<!-- JavaScript for Dynamic Filtering -->
-<script>
-    document.querySelectorAll('input[name="filter"]').forEach((radio) => {
-        radio.addEventListener('change', function () {
-            const filterValue = this.value;
-            const searchQuery = document.getElementById('search-query').value;  // Get the value of the query input
-            
-            // Dynamically create the URL based on the query and filter
-            const url = `/search?query=${encodeURIComponent(searchQuery)}&filter=${filterValue}`;
-
-            // Fetch filtered results
-            fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                // Update the results container with the new HTML content
-                document.getElementById('results-container').innerHTML = data;
-            })
-            .catch(error => console.error('Error fetching data:', error));
-        });
-    });
-</script>
 {% endblock %}
