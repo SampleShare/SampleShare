@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<br/>
+
+<div class="card">
+    <div class="card-header"><strong>
+          Post
+          </strong>
+    </div>
+    <div class="card-body">
+
+    <p class="card-text">
+    <strong>Text: </strong>{{ user_comment.commentMessage }}</p> 
+
+    {% if user.userprofile.id == user_comment.userProfile.id %}
+    <a href="{% url 'update_comment' user_comment.id %}" class="btn btn-primary">Update Comment</a>
+    <a href="{% url 'delete_comment' user_comment.id %}" class="btn btn-danger">Delete Comment</a>
+    
+    {% endif %}
+    <a href="{% url 'comments' user_comment.posts.id%}" class="btn btn-secondary">Back</a>
+
+{% endblock %}

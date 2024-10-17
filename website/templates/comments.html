@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content%}
+
+<h1>Comments</h1>
+<br/>
+{% if userComments %}
+    {% for comment in userComments %}
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a href ="{% url 'profile' comment.userProfile.user.username %}">{{ comment.userProfile.user.username }} </a>
+        </li>
+        <li class="list-group-item">{{ comment.commentMessage }} {{comment.sample}}</li>
+
+        <!-- if the comment doesn't contain a sample do not display the sample -->
+        {% if comment.samples != None %}
+        <li class="list-group-item"> {{comment.samples}}</li>
+        {% endif %}
+    </ul>
+    {% if user.userprofile.id == comment.userProfile.id %}
+    <a href ="{% url 'comment_detail' comment.id %}" class="btn btn-secondary">Edit Your Comment</a>
+    {% endif %}
+    <br/>
+    {% endfor %}
+{% endif %}
+<br/>
+<a href ="{% url 'create_comment' user_post.id %}" class="btn btn-primary">Make a Comment</a>
+<a href ="{% url 'posts'%}" class="btn btn-secondary">back</a>
+
+{% endblock %}

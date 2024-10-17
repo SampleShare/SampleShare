@@ -1,0 +1,27 @@
+{% extends 'base.html'%}
+{% block content %}
+
+<div class="col-md-6 offset-md-3">
+
+    <h1>Add Post</h1>
+    <br/>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary"> Comment </button>
+        <a href ="{% url 'home'%}" class="btn btn-secondary">back</a>
+    
+        <script>
+            var name = "{{ user.userprofile.id }}";
+            document.getElementById("user").value=
+            name;
+        </script>
+        <script>
+            var post = "{{ current_post.id }}";
+            document.getElementById("post").value=
+                post;
+        </script>
+
+    </form>
+</div>
+{% endblock %}

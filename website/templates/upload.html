@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Sample</title>
+    <style>
+        /* Basic styling for drag-and-drop area */
+        #drop-zone {
+            width: 70%;
+            height: 150px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .file-item {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upload Samples</h1>
+
+    <div id="drop-zone">Drag and drop files here</div>
+    <ul id="file-list"></ul>
+
+    <form id="SampleUploadForm" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <br><br>
+        <button type="submit" id="submit-btn">Upload</button>
+        <button type="button" onclick="window.location.href='/'">Cancel</button>
+    </form>
+</body>
+{% endblock %}
