@@ -8,6 +8,33 @@ class SampleForm(forms.ModelForm):
     class Meta:
         model = Sample
         fields = ["sampleName", "audioFile", "isPublic", "userProfiles"]
+        widgets = {
+            "userProfiles": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "value": "",
+                    "id": "user",
+                    "type": "hidden",
+                }
+            )
+        }
+
+
+class SampleEditForm(forms.ModelForm):
+    class Meta:
+        model = Sample
+        fields = ["sampleName", "isPublic", "userProfiles"]
+        labels = {"isPublic": "Make Sample Public?"}
+        widgets = {
+            "userProfiles": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "value": "",
+                    "id": "user",
+                    "type": "hidden",
+                }
+            )
+        }
 
 
 class SignUpForm(UserCreationForm):
@@ -103,9 +130,6 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ["bio", "userPhoto"]
-
-
-# ---------------------------------------------------
 
 
 # ----------------------Comment Code------------------#\

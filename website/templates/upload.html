@@ -37,6 +37,12 @@
         <br><br>
         <button type="submit" id="submit-btn">Upload</button>
         <button type="button" onclick="window.location.href='/'">Cancel</button>
+        <script>
+          var name = "{{ user.userprofile.id }}";
+          document.getElementById("user").value =
+            name;
+        </script>
+        
     </form>
 </body>
 {% endblock %}

@@ -5,17 +5,25 @@
 <h2> Uploaded Samples </h2>
 
 {% if query_all_sample %}
-<ul>
-  {% for sample in query_all_sample %}
-    <li>
-      <h3> {{sample.sampleName}}</h3>
-      <div class="player-container"> 
-        <button onclick="playPause('{{ sample.audioFile.url }}')" id="playBtn" class="btn btn-primary"> Play </button>
-      </div>
-    <!-- <button onclick="playSample('{{sample.audioFile.url}}')" class="btn btn-primary"> Play Sample </button> -->
-    </li>
+<table class="table table-hover">
+  <thead> 
+    <tr> 
+      <th scope="col">Sample Names</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sample in query_all_sample %}
+    <tr>
+      <td scope="row">{{ sample.sampleName }}</td>
+      <td scope="row"> 
+        <div class="player-container"> 
+          <button onclick="playPause('{{ sample.audioFile.url }}')" id="playBtn" class="btn btn-primary"> Play </button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
   {% endfor %}
-</ul>
+
 {%else%}
   <p>No Samples Uploaded!</p>
 {%endif%}

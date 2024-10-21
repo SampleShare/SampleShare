@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- users uploaded samples -->
+<h1>Your Uploaded Samples</h1>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Sample Name</th>
+      <th scope="col">Privacy Status</th>
+      <th scope="col">Edit/Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sample in user_samples %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ sample.sampleName }}</td>
+      <td>
+        {% if sample.isPublic %}
+        <span class="test-success">Public</span>
+        {% else %}
+        <span class="text-danger">Private</span>
+        {% endif %}
+      </td>
+      <td>
+        <a href="?update={{ sample.id }}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'delete_user_sample' sample.id %}" class="btn btn-danger"
+          onclick="return confirm('Are you sure you want to permanently delete this sample?');">Delete</a>
+
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if form %}
+<h2>Update Sample: {{ form.instance.sampleName }}</h2>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <input type="hidden" name="sample_id" value="{{ form.instance.id }}">
+
+  <button type="submit" class="btn btn-success">Save Changes</button>
+  <a href="{% url 'edit_samples' %}" class="btn btn-secondary">Cancel</a>
+
+  <input type="hidden" name="sample_id" value="{{ form.instance.id }}">
+
+  <script>
+    var name = "{{ user.userprofile.id }}";
+    document.getElementById("user").value =
+      name;
+  </script>
+
+
+</form>
+{% endif %}
+
+{% endblock%}
