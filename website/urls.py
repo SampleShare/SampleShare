@@ -19,6 +19,12 @@ urlpatterns = [
     path("delete-account/", views.delete_account, name="delete_account"),
     # -------Samples/Uploads Links------------#
     path("upload/", views.upload, name="upload"),
+    path("edit_samples/", views.update_user_samples, name="edit_samples"),
+    path(
+        "delete_user_sample/<int:sample_id>/",
+        views.delete_user_sample,
+        name="delete_user_sample",
+    ),
     path("sample/", views.sample_player, name="sample_player"),
     # -------Posts Links------------#
     path("posts/", views.posts, name="posts"),

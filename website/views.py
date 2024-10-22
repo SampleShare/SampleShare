@@ -6,7 +6,7 @@ from django.http import Http404
 from .models import Sample, UserProfile, Post, Comment
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SampleForm, SignUpForm, PostForm, CommentForm
+from .forms import SampleEditForm, SampleForm, SignUpForm, PostForm, CommentForm
 from django.contrib.auth.models import User
 from django.views.generic import CreateView
 from .forms import ProfileForm
@@ -100,7 +100,7 @@ def register_user(request):
     return render(request, "register.html", {"form": form})
 
 
-# --------------------------------------------------------------------#
+# ----------------------------Sample Functionality---------------------------------------#
 
 
 def upload(request):
@@ -119,7 +119,63 @@ def upload(request):
         return redirect("login")
 
 
-# --------------------------------------------------------------------#
+def update_user_samples(request):
+    if request.user.is_authenticated:
+        user_samples = Sample.objects.filter(userProfiles__user=request.user)
+        form = None
+
+        if request.method == "POST":
+            sample_id_to_update = request.POST.get("sample_id")
+            if sample_id_to_update:
+                sample = get_object_or_404(
+                    Sample, pk=sample_id_to_update, userProfiles__user=request.user
+                )
+                form = SampleEditForm(request.POST, instance=sample)
+                form.instance.audioFile = sample.audioFile
+
+                if form.is_valid():
+                    form.save()
+                    messages.success(
+                        request, f"{sample.sampleName} updated successfully!"
+                    )
+                    return redirect("edit_samples")
+        else:
+            sample_id_to_update = request.GET.get("update")
+            if sample_id_to_update:
+                sample = get_object_or_404(
+                    Sample, pk=sample_id_to_update, userProfiles__user=request.user
+                )
+                form = SampleEditForm(instance=sample)
+
+        return render(
+            request,
+            "edit_samples.html",
+            {"user_samples": user_samples, "form": form},
+        )
+    else:
+        messages.error(request, "You need to be logged in to access this page.")
+        return redirect("login")
+
+
+def delete_user_sample(request, sample_id):
+    if request.user.is_authenticated:
+        try:
+            sample_to_delete = get_object_or_404(
+                Sample, id=sample_id, userProfiles__user=request.user
+            )
+            audio_file_path = sample_to_delete.audioFile.path
+            sample_to_delete.delete()
+
+            if os.path.exists(audio_file_path):
+                os.remove(audio_file_path)
+                messages.success(request, "Sample file deleted successfully.")
+        except Exception as e:
+            messages.warning(request, f"An unexpected error occurred: \n {e}")
+    else:
+        messages.error(request, "You need to be logged in!")
+        return redirect("login")
+
+    return redirect("edit_samples")
 
 
 def sample_player(request):
@@ -131,6 +187,9 @@ def sample_player(request):
     else:
         messages.error(request, "You must be logged in to listen to samples.")
         return redirect("login")
+
+
+# --------------------------------------------------------------------#
 
 
 def search_user(request):
