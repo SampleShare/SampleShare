@@ -195,52 +195,42 @@ def sample_player(request):
 def search_user(request):
     if request.method == "GET":
         query = request.GET.get("q")
-        filter_type = request.GET.get("filter", "all")
+        filter_type = request.GET.getlist("filter")  # This allows for multiple filters to be selected
 
+        # Default to showing both usernames and samples if no filter is selected
+        if not filter_type or 'all' in filter_type:
+            filter_type = ['username', 'sample']
+
+        matching_users = []
+        matching_samples = []
+
+        # Apply the filters based on the selected checkboxes
         if query:
-            if filter_type == "username":
+            if 'username' in filter_type:
                 matching_users = User.objects.filter(username__icontains=query)
-                matching_samples = []
-            elif filter_type == "sample":
-                matching_users = []
-                matching_samples = Sample.objects.filter(sampleName__icontains=query, isPublic=True)
-            else:
-                matching_users = User.objects.filter(username__icontains=query)
+            
+            if 'sample' in filter_type:
                 matching_samples = Sample.objects.filter(sampleName__icontains=query, isPublic=True)
 
+        # Render the template with the filtered results
+        return render(request, 'search_results.html', {
+            'users': matching_users,
+            'samples': matching_samples,
+            'query': query,
+            'filter_type': filter_type  # Passing filter_type back to the template to maintain checkbox state
+        })
 
-            # For regular requests, return the full template
-            return render(request, 'search_results.html', {
-                'users': matching_users,
-                'samples': matching_samples,
-                'query': query,
-                'filter_type': filter_type
-            })
-
-        return render(request, 'search_results.html', {'users': None, 'samples': None, 'query': query, 'filter_type': filter_type})
+    # Default state: show all
+    return render(request, 'search_results.html', {
+        'users': None, 
+        'samples': None, 
+        'query': None, 
+        'filter_type': ['username', 'sample']  # Default filter shows all initially
+    })
 
 
 
 
-
-
-def search_view(request):
-    filter_value = request.GET.get('filter', 'all')
-
-    # QuerySets for filtering
-    if filter_value == 'username':
-        results = UserProfile.objects.filter(username__icontains=request.GET.get('q', ''))
-    elif filter_value == 'sample':
-        results = Sample.objects.filter(sample__sampleName__icontains=request.GET.get('q', ''))
-    else:
-        usernames = UserProfile.objects.filter(username__icontains=request.GET.get('q', ''))
-        samples = Sample.objects.filter(sampleName__icontains=request.GET.get('q', ''))
-        results = {'usernames': usernames, 'samples': samples}
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return render(request, 'your_partial_results_template.html', {'results': results})
-    
-    return render(request, 'search_page.html', {'results': results})
 
 
 # ----------------------------Post Code -------------------------------#

@@ -2,65 +2,57 @@
 
 {% block content %}
 <h2>Search Results for "{{ query }}"</h2>
-<div id="filter-options">
-    <label><input type="radio" name="filter" value="all" checked> All</label>
-    <label><input type="radio" name="filter" value="username"> Username</label>
-    <label><input type="radio" name="filter" value="sample"> Samples</label>
+
+<div style="display: flex;">
+    <!-- Sidebar Filter Form (far left) -->
+    <div style="width: 200px; margin-left: -200px;">
+        <form method="GET" action="{% url 'search_user' %}">
+            <div style="display: flex; flex-direction: column;">
+                <label>
+                    <input type="checkbox" name="filter" value="username" {% if 'username' in filter_type %}checked{% endif %}> Usernames
+                </label>
+                <label>
+                    <input type="checkbox" name="filter" value="sample" {% if 'sample' in filter_type %}checked{% endif %}> Samples
+                </label>
+            </div>
+            <button type="submit" name="q" value="{{ query }}">Search</button>
+        </form>
+    </div>
+
+    <!-- Main Content (normal layout for search results) -->
+    <div style="flex-grow: 1;">
+        <!-- Results Container -->
+        <div id="results-container">
+            <!-- User Results -->
+            {% if users %}
+                <h3>Users</h3>
+                <ul>
+                    {% for user in users %}
+                        <li><a href="{% url 'profile' user.username %}">{{ user.username }}</a></li>
+                    {% endfor %}
+                </ul>
+          
+            {% endif %}
+
+            <!-- Sample Results -->
+            {% if samples %}
+                <h3>Samples</h3>
+                <ul>
+                    {% for sample in samples %}
+                        <li>
+                            {{ sample.sampleName }}
+                            <!-- Audio Player -->
+                            <audio controls>
+                                <source src="{{ sample.audioFile.url }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </li>
+                    {% endfor %}
+                </ul>
+            
+            {% endif %}
+        </div>
+    </div>
 </div>
 
-<!-- Results Container -->
-<div id="results-container">
-    <!-- User Results -->
-    {% if users %}
-        <h3>Users</h3>
-        <ul>
-            {% for user in users %}
-                <li><a href="{% url 'profile' user.username %}">{{ user.username }}</a></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No users found matching "{{ query }}".</p>
-    {% endif %}
-
-    <!-- Sample Results -->
-    {% if samples %}
-        <h3>Samples</h3>
-        <ul>
-            {% for sample in samples %}
-                <li>
-                    {{ sample.sampleName }}
-                    <!-- Audio Player -->
-                    <audio controls>
-                        <source src="{{ sample.audioFile.url }}" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No samples found matching "{{ query }}".</p>
-    {% endif %}
-</div>
-<script>
-    document.querySelectorAll('input[name="filter"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const filterValue = this.value;
-    
-            // Send an AJAX request to update results
-            fetch(`/your-search-url?filter=${filterValue}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.text())
-            .then(html => {
-                // Replace the search results with the updated ones
-                document.getElementById('search-results').innerHTML = html;
-            })
-            .catch(error => console.error('Error fetching filtered results:', error));
-        });
-    });
-    </script>
-    
 {% endblock %}
