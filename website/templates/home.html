@@ -1,10 +1,34 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
-<body>
-    <div class="col-md-6 offset-md-3">      
+{% block content%}
+
+<div class="col-md-6 offset-md-3">      
     <h1>WELCOME TO SAMPLE SHARE</h1>
     </div>
-    <img src="{% static 'images/Sample.png' %}" alt="Sample" style="width:2000px;height:3000;">
-</body>
-    {% endblock %}
+
+
+{% if userPosts %}
+    {% for post in userPosts %}
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a href ="{% url 'profile' post.userProfiles.user.username %}">{{ post.userProfiles.user.username }} </a>
+        </li>
+        <li class="list-group-item">{{ post.postText }}</li>
+        <li class="list-group-item">
+            <strong>Sample:</strong>
+            {{ post.samples.sampleName }} 
+            <div class="player-container"> 
+            <button onclick="playPause('{{ post.samples.audioFile.url }}')" id="playBtn" class="btn btn-primary"> Play </button>
+          </div></li>
+        
+    </ul>
+    <a href="{%url 'user_post' post.id%}" class="btn btn-secondary"> View Post </a>
+    <br/>
+    {% endfor %}
+{% endif %}
+<br/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+<script src="{% static 'js/sample_player.js' %}"></script>
+
+{% endblock %}

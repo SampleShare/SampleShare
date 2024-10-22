@@ -10,13 +10,14 @@
         {{ form.as_p }}
         <button class="btn btn-secondary"> Post</button>
         <a href ="{% url 'home'%}" class="btn btn-secondary">back</a>
-    
 
+        
         <script>
             var name = "{{ user.userprofile.id }}";
             document.getElementById("user").value=
                 name;
         </script>
+
     </form>
 </div>
 {% endblock %}

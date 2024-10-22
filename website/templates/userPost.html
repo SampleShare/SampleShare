@@ -21,6 +21,17 @@
 <a href="{% url 'delete_post' user_post.id %}" class="btn btn-danger">Delete</a>
 <a href="{% url 'update_post' user_post.id %}" class="btn btn-secondary">Update</a>
 {% endif %}
-<a href="{% url 'posts' %}" class="btn btn-secondary">Back</a>
+<a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
 <a href="{% url 'comments' user_post.id %}" class="btn btn-secondary">Comments</a>
+<form action = "{% url 'like_post' user_post.id %}" method="POST">
+    {% csrf_token %}
+
+    {% if liked %}
+    <button type="submit", name="post_id", value="{{ user_post.id }}", class="btn btn-danger btn-sm">Unlike</button>
+    {% else %}
+    <button type="submit", name="post_id", value="{{ user_post.id }}", class="btn btn-primary btn-sm">Like</button>
+
+    {% endif %}
+    - {{total_likes }} Likes
+</form>
 {% endblock %}

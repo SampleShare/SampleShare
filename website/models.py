@@ -120,12 +120,16 @@ class Post(models.Model):
     samples = models.ForeignKey(Sample, on_delete=models.CASCADE, null=True)
     # Many to Many with user-Profiles
     userProfiles = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)
+    likes = models.ManyToManyField(User, related_name="User_Posts")
 
     def __str__(self):
         return f"{self.postText} {self.postTimeStamp}"
 
     def get_absolute_url(self):
-        return reverse("posts")
+        return reverse("home")
+    
+    def total_likes(self):
+        return self.likes.count()
 
 
 # ------Comments------
@@ -146,4 +150,4 @@ class Comment(models.Model):
         return f"{self.commentMessage} {self.commentTimeStamp}"
     
     def get_absolute_url(self):
-        return reverse("posts")
+        return reverse("home")

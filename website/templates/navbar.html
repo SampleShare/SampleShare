@@ -17,10 +17,7 @@
         </li>
         <!-------------------- Post Code  ----------------->
         <li class="nav-item"></li>
-        <a class="nav-link" href="{% url 'create_post' %}">Create Post</a>
-        </li>
-        <li class="nav-item"></li>
-        <a class="nav-link" href="{% url 'posts' %}">Posts</a>
+        <a class="nav-link" href="{% url 'create_post' user.userprofile.id%}">Create Post</a>
         </li>
         <li class="nav-item"></li>
         <a class="nav-link" href="{% url 'upload' %}">Upload</a>

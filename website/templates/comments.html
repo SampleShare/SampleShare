@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content%}
 
 <h1>Comments</h1>
@@ -14,7 +14,11 @@
 
         <!-- if the comment doesn't contain a sample do not display the sample -->
         {% if comment.samples != None %}
-        <li class="list-group-item"> {{comment.samples}}</li>
+        <li class="list-group-item"> {{comment.samples.sampleName}}
+        <div class="player-container"> 
+            <button onclick="playPause('{{ comment.samples.audioFile.url }}')" id="playBtn" class="btn btn-primary"> Play </button>
+          </div>
+        </li>
         {% endif %}
     </ul>
     {% if user.userprofile.id == comment.userProfile.id %}
@@ -25,6 +29,8 @@
 {% endif %}
 <br/>
 <a href ="{% url 'create_comment' user_post.id %}" class="btn btn-primary">Make a Comment</a>
-<a href ="{% url 'posts'%}" class="btn btn-secondary">back</a>
+<a href ="{% url 'home'%}" class="btn btn-secondary">back</a>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+<script src="{% static 'js/sample_player.js' %}"></script>
 {% endblock %}

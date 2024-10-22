@@ -17,7 +17,10 @@ import os
 # Create your views here.
 def home(request):
     profiles = UserProfile.objects.all()
-    return render(request, "home.html", {})
+        # Look Up Posts
+    userPosts = Post.objects.all()
+    return render(request, "home.html", {"userPosts": userPosts})
+    #return render(request, "home.html", {})
 
 
 # --------------------------------------------------------------------#
@@ -244,36 +247,46 @@ def posts(request):
         return redirect("home")
 
 
-# --------------------------------------------------------------------#
-
-
 def user_post(request, pk):
     if request.user.is_authenticated:
         user_post = Post.objects.get(id=pk)
-        return render(request, "userPost.html", {"user_post": user_post})
+        likes = get_object_or_404(Post, id=pk)
+        total_likes = likes.total_likes()
+
+        liked = False
+        if likes.likes.filter(id=request.user.id):
+            liked = True
+        return render(request, "userPost.html", {"user_post": user_post, "total_likes":total_likes, "liked":liked})
     else:
         messages.success(request, "Your Must Be Logged In...")
         return redirect("home")
 
 
-# --------------------------------------------------------------------#
-
-
-class CreatePostView(CreateView):
-    model = Post
-    form_class = PostForm
-    template_name = "create_post.html"
-    # fields = '__all__'
-
-
-# --------------------------------------------------------------------#
+def create_post(request, pk):
+    if request.user.is_authenticated:
+        #current_post = Post.objects.get(id=pk)
+        user_samples = Sample.objects.filter(userProfiles=pk)
+        user_id = request.user.userprofile
+        form = PostForm(request.POST or None, user_id=user_id)
+        if request.method == "POST":
+            if form.is_valid():
+                add_post = form.save()
+                messages.success(request, "Post Created...")
+                return redirect("home")
+        return render(
+            request, "create_post.html", {"form": form, "user_samples": user_samples}
+        )
+    else:
+        messages.success(request, "Your Must Be Logged In...")
+        return redirect("home")
 
 
 def update_post(request, pk):
 
     if request.user.is_authenticated:
+        user_id = request.user.userprofile
         current_post = Post.objects.get(id=pk)
-        form = PostForm(request.POST or None, instance=current_post)
+        form = PostForm(request.POST or None, user_id=user_id, instance=current_post)
         if request.method == "POST":
             if form.is_valid():
                 add_post = form.save()
@@ -285,18 +298,28 @@ def update_post(request, pk):
         return redirect("home")
 
 
-# --------------------------------------------------------------------#
-
-
 def delete_post(request, pk):
     if request.user.is_authenticated:
         deletePost = Post.objects.get(id=pk)
         deletePost.delete()
         messages.success(request, "Post Was Deleted...")
-        return redirect("posts")
+        return redirect("home")
     else:
         messages.success(request, "You Must Be Logged In To Do That...")
-        return redirect("posts")
+        return redirect("home")
+
+
+def like_view(request, pk):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    #post.likes.add(request.user)
+    liked = False
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+    return redirect('home')
 
 
 # --------------------------------------------------------------------#
@@ -323,27 +346,22 @@ class CreateCommentView(CreateView):
     template_name = "create_comment.html"
 
 
-# --------------------------------------------------------------------#
-
-
 def create_comment(request, pk):
     if request.user.is_authenticated:
         current_post = Post.objects.get(id=pk)
-        form = CommentForm(request.POST or None)
+        userProfile_id = request.user.userprofile
+        form = CommentForm(request.POST or None, userProfile_id=userProfile_id)
         if request.method == "POST":
             if form.is_valid():
                 add_comment = form.save()
                 messages.success(request, "Comment Created...")
-                return redirect("posts")
+                return redirect("home")
         return render(
             request, "create_comment.html", {"form": form, "current_post": current_post}
         )
     else:
         messages.success(request, "Your Must Be Logged In...")
         return redirect("home")
-
-
-# --------------------------------------------------------------------#
 
 
 def comments(request, pk):
@@ -361,9 +379,6 @@ def comments(request, pk):
         return redirect("home")
 
 
-# --------------------------------------------------------------------#
-
-
 def comment_detail(request, pk):
     if request.user.is_authenticated:
         user_comment = Comment.objects.get(id=pk)
@@ -373,25 +388,20 @@ def comment_detail(request, pk):
         return redirect("home")
 
 
-# --------------------------------------------------------------------#
-
-
 def update_comment(request, pk):
     if request.user.is_authenticated:
+        userProfile_id = request.user.userprofile
         current_comment = Comment.objects.get(id=pk)
-        form = CommentForm(request.POST or None, instance=current_comment)
+        form = CommentForm(request.POST or None,userProfile_id=userProfile_id, instance=current_comment)
         if request.method == "POST":
             if form.is_valid():
                 add_comment = form.save()
                 messages.success(request, "Comment Updated...")
-                return redirect("posts")
+                return redirect("home")
         return render(request, "update_comment.html", {"form": form})
     else:
         messages.success(request, "Your Must Be Logged In...")
         return redirect("home")
-
-
-# --------------------------------------------------------------------#
 
 
 def delete_comment(request, pk):
@@ -399,10 +409,10 @@ def delete_comment(request, pk):
         deleteComment = Comment.objects.get(id=pk)
         deleteComment.delete()
         messages.success(request, "Comment Was Deleted...")
-        return redirect("posts")
+        return redirect("home")
     else:
         messages.success(request, "You Must Be Logged In To Do That...")
-        return redirect("posts")
+        return redirect("home")
 
 
 # ---------------------------------Delete Account-----------------------------------#
