@@ -39,10 +39,12 @@
         {% endif %}
       </ul>
 
+      {% if user.is_authenticated %}
       <form method="get" action="{% url 'search_user' %}">
         <input type="text" name="q" placeholder="Search">
         <button type="submit" class="btn btn-outline-primary">Search</button>
       </form>
+      {% endif %}
     </div>
   </div>
 </nav>
