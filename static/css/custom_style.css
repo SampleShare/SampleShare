@@ -1,0 +1,124 @@
+/* Style the body */
+body {
+    background-image: linear-gradient(45deg, #1e232e , #362d4b ); /* Dark blue gradient */
+    background-repeat: no-repeat;
+    background-size: cover; /* Ensures the gradient covers the entire page */
+    min-height: 100vh; /* Ensures gradient covers the full viewport height */
+    color: #e0e0e0; /* Light text color */
+  }
+  
+  /* Style the profile card */
+  .profile-card {
+    background-color: #202830; /* Brighter background compared to the page */
+    padding: 20px;
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3); /* Slight shadow for depth */
+    color: #e0e0e0; /* Text color */
+    margin-top: 20px; /* Space from the top */
+  }
+  
+  /* Profile Info container: Flexbox for left alignment */
+  .profile-info {
+    display: flex; /* Aligns image and details side by side */
+    align-items: flex-start; /* Aligns items to the top of the card */
+    gap: 20px; /* Adds space between the image and the text */
+  }
+  
+  /* Style the image */
+  .profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid #00ffcc; /* Cyan border for profile picture */
+  }
+  
+  /* Style the heading */
+  h2 {
+    color: rgb(255, 255, 255);
+  }
+  
+  /* Custom button styles (overrides Bootstrap) */
+  .btn-primary {
+    background-color: purple;
+    color: white;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: darkviolet;
+  }
+  /* Basic button styling for wave fx*/
+.wave-btn {
+    background-color: #6a1b9a; /* Starting color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Fallback transition */
+  }
+  
+  /* Define the keyframes for the color wave */
+  @keyframes waveColor {
+    0% {
+      background-color: #6a1b9a; /* Dark purple */
+    }
+    25% {
+      background-color: #9575cd; /* Light dull purple */
+    }
+    50% {
+      background-color: #c0ace3; /* Cyan */
+    }
+    75% {
+      background-color: #8e24aa; /* Medium purple */
+    }
+    100% {
+      background-color: #6a1b9a; /* Back to the original */
+    }
+  }
+  
+  /* Apply the animation on hover */
+  .wave-btn:hover {
+    animation: waveColor 2s linear infinite; /* 2-second color wave, looping infinitely */
+  }
+
+
+  /* Base button styling */
+.animated-border-btn {
+    background-color: #6a1b9a; /* Dark purple background */
+    color: white;
+    padding: 10px 20px;
+    border: 2px solid transparent; /* Start with a transparent border */
+    border-radius: 5px;
+    transition: all 0.3s ease; /* Smooth transition for background and padding */
+    position: relative;
+    z-index: 1;
+    overflow: hidden; /* To prevent the border from going outside the button */
+  }
+  
+/* Base button styling */
+.animated-border-btn {
+    color: #128347; /* Initial text color */
+    background-color: #ffffff; /* White background */
+    padding: 10px 15px;
+    border: 4px solid #128347; /* Green border */
+    border-radius: 6px; /* Initial border-radius */
+    text-transform: uppercase;
+    display: inline-block;
+    font-size: 12px;
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+    cursor: pointer;
+  }
+  
+  /* Hover state with changes to border radius and border color */
+  .animated-border-btn:hover {
+    color: #6a1b9a; /* Text color changes to dark grey */
+    border-color: #494949; /* Border changes to dark grey */
+    border-radius: 50px; /* Border radius expands to make the button more circular */
+    background-color: #ffffff; /* Keep the background white */
+    transition: all 0.3s ease; /* Smooth transition */
+  }
+  
+  
+  

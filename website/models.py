@@ -17,6 +17,7 @@ from mutagen import mp3, wave
 # bio = TEXT NOT NULL
 # ------------------------------------
 class UserProfile(models.Model):
+
 	user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
 	dateOfBirth = models.DateField()
 	userPhoto = models.ImageField(upload_to="profile_pics/", default="profile_pics/profile_picture_default.jpg")	

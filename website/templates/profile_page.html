@@ -2,81 +2,102 @@
 {% load static %}
 
 {% block content %}
-<!-- Container for user profile and friend requests -->
-<div style="display: flex; justify-content: space-between;">
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Card container for the profile -->
+      <div class="profile-card">
+        <!-- Left-align the profile picture and information -->
+        <div class="profile-info">
+          <div style="display: flex; align-items: center; gap: 20px;">
+            {% if profile_user.userprofile.userPhoto %}
+              <!-- Display the uploaded profile photo -->
+              <img src="{{ profile_user.userprofile.userPhoto.url }}" alt="Profile Photo" style="width:150px; height:150px; border-radius: 50%;">
+            {% else %}
+              <!-- Use the default profile picture from static if no photo is uploaded -->
+              <img src="{% static 'images/profile_picture_default.jpg' %}" alt="Default Profile Photo" style="width:150px; height:150px; border-radius: 50%;">
+            {% endif %}
+            <h2>{{ profile_user.username }}</h2>
+          </div>
+          <div class="profile-details">
+            <p>Email: {{ profile_user.email }}</p>
+            <p>Bio: {{ profile_user.userprofile.bio }}</p>
+            <!-- Link to Edit Profile -->
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary animated-border-btn">Edit Profile</a>
+            <a href="{% url 'edit_samples' %}" class="btn btn-primary animated-border-btn">Edit Samples</a>
+          </div>
+        </div>
+        <!-- Friend request section -->
+        {% if is_owner %}
+        <div>
+          <h2> Friend Requests: </h2>
+          {% if received_requests %}
+          <ul>
+            {% for frequest in received_requests %}
+              <li style="display: flex; align-items: center; gap: 20px;">
+                <!-- Display sender's profile picture -->
+                <img src="{% static frequest.from_user.userPhoto %}" alt="Profile Picture" style="width:50px; height:50px; border-radius: 50%;">
 
-  <!-- User name + Profile Pic -->
-  <div style="flex: 1; margin-right: 20px;">
-    <div style="display: flex; align-items: center; gap: 20px;">
-        <img src="{{ profile_user.userprofile.userPhoto.url }}" alt="{% static 'images/profile_picture_default.jpg' %}" style="width:150px; height:150px; border-radius: 50%;">
-        <h2>{{ profile_user.username }}</h2>        
-    </div>
+                <!-- Display sender's username -->
+                <span>{{ frequest.from_user.user.username }}</span>
 
-    <div>
-      <p>Email: {{ profile_user.email }}</p>
-      <p>First Name: {{ profile_user.first_name }}</p>
-      <p>Last Name: {{ profile_user.last_name }}</p>
-      <p>Bio: {{ profile_user.userprofile.bio }}</p>
+                <!-- Display how long ago the request was sent -->
+                <span>{{ frequest.created_at|timesince }} ago</span>
 
-      <!-- Link to Edit Profile -->
-      <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
-      <a href="{% url 'edit_samples' %}" class="btn btn-primary">Edit Samples</a>
-    </div>
-  </div>
-
-  <!-- Friend Requests Section -->
-  <div style="flex: 0 0 250px;"> <!-- Adjust the width as needed -->
-    {% if is_owner %}
-      <h2>Friend Requests:</h2>
-      {% if received_requests %}
-        <ul>
-          {% for frequest in received_requests %}
-            <li style="display: flex; align-items: center; gap: 10px;">
-              <img src="{{ profile_user.userprofile.userPhoto.url }}" alt="Profile Picture" style="width:50px; height:50px; border-radius: 50%;">
-              <span>{{ frequest.from_user.user.username }}</span>
-              <span>{{ frequest.created_at|timesince }} ago</span>
-              <form action="{% url 'accept_friend_request' frequest.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-success">Accept</button>
-              </form>
-              <form action="{% url 'decline_friend_request' frequest.id %}" method="POST" style="margin-left: 10px;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Decline</button>
-              </form>
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>No friend requests at this time.</p>
-      {% endif %}
-    {% else %}
-      <div>
-        {% if is_friend %}
-          <a href="{% url 'private_chat_redirect' profile.user.id %}" class="btn btn-primary">Message</a>
-          <form action="{% url 'remove_friend' profile.user.id %}" method="POST">
-            {% csrf_token %}
-            <button type="submit">Remove Friend</button>
-          </form>
-        {% elif sent_request %}
-          <p>Friend request sent.</p>
-        {% elif received_request %}
-          <h3>Wants to be your friend!</h3>
-          <form action="{% url 'accept_friend_request' received_request.id %}" method="POST" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit">Accept</button>
-          </form>
-          <form action="{% url 'decline_friend_request' received_request.id %}" method="POST" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit">Decline</button>
-          </form>
+                <!-- Accept and Decline buttons -->
+                <form action="{% url 'accept_friend_request' frequest.id %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Accept</button>
+                </form>
+                
+                <form action="{% url 'decline_friend_request' frequest.id %}" method="POST" style="margin-left: 10px;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Decline</button>
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+            <p>No friend requests at this time.</p>
+          {% endif %}
+        </div>
         {% else %}
-          <form action="{% url 'send_friend_request' profile.user.id %}" method="POST">
-            {% csrf_token %}
-            <button type="submit">Send Friend Request</button>
-          </form>
+        <div>
+          {% if is_friend %}
+            <!-- User is a friend -->
+            <!-- Creates/Routes to chat -->
+            <a href="{% url 'private_chat_redirect' profile.user.id %}" class="btn btn-primary">Message</a>
+
+            <form action="{% url 'remove_friend' profile.user.id %}" method="POST">
+              {% csrf_token %}
+              <button type="submit">Remove Friend</button>
+            </form>
+          {% elif sent_request %}
+            <!-- Friend request is already sent -->
+            <p>Friend request sent.</p>
+          {% elif received_request %}
+            <!-- Friend request can be accepted or declined -->
+            <h3>Wants to be your friend!</h3>
+            <form action="{% url 'accept_friend_request' received_request.id %}" method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">Accept</button>
+            </form>
+            <form action="{% url 'decline_friend_request' received_request.id %}" method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit">Decline</button>
+            </form>
+          {% else %}
+            <!-- Send a friend request -->
+            <form action="{% url 'send_friend_request' profile.user.id %}" method="POST">
+              {% csrf_token %}
+              <button type="submit">Send Friend Request</button>
+            </form>
+          {% endif %}
+        </div>
         {% endif %}
       </div>
-    {% endif %}
+    </div>
+
   </div>
 </div>
 {% endblock %}
