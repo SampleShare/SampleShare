@@ -21,38 +21,76 @@
         </form>
     </div>
 
-    <!-- Main Content (normal layout for search results) -->
+    <!-- Main Content (cards layout for search results) -->
     <div style="flex-grow: 1;">
-        <!-- Results Container -->
-        <div id="results-container">
+        <div id="results-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
             <!-- User Results -->
             {% if users %}
                 <h3>Users</h3>
-                <ul>
-                    {% for user in users %}
-                        <li><a href="{% url 'profile' user.username %}">{{ user.username }}</a></li>
-                    {% endfor %}
-                </ul>
+                {% for user in users %}
+                    <div class="card">
+                        <a href="{% url 'profile' user.username %}">
+                            <h4 class="card-title">{{ user.username }}</h4>
+                        </a>
+                    </div>
+                {% endfor %}
             {% endif %}
 
             <!-- Sample Results -->
             {% if samples %}
                 <h3>Samples</h3>
-                <ul>
-                    {% for sample in samples %}
-                        <li>
-                            {{ sample.sampleName }}
-                            <!-- Audio Player -->
+                {% for sample in samples %}
+                    <div class="card">
+                        <h4 class="card-title">{{ sample.sampleName }}</h4>
+                        <!-- Customized Audio Player -->
+                        <div class="audio-player">
                             <audio controls>
                                 <source src="{{ sample.audioFile.url }}" type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>
-                        </li>
-                    {% endfor %}
-                </ul>
+                        </div>
+                    </div>
+                {% endfor %}
             {% endif %}
         </div>
     </div>
 </div>
 
+<style>
+    /* Card Styling */
+    .card {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+        text-align: center;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    /* Title Styling */
+    .card-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #333;
+        margin: 0 0 15px;
+    }
+
+    /* Audio Player Styling */
+    .audio-player audio {
+        width: 100%;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    /* Overall Layout */
+    #results-container h3 {
+        grid-column: 1 / -1; /* Make headings span across the entire grid */
+        font-size: 1.5em;
+        margin-top: 20px;
+    }
+</style>
 {% endblock %}
