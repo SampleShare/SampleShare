@@ -1,21 +1,50 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
+<head>
+    <style>
+        .badge {
+            margin: 5px; /* Adjust the value as needed */
+            color: silver; /* Set text color to silver */
+            font-size: 1.2em; /* Increase the font size */
+            padding: 10px 15px; /* Add padding to make the badges larger */
+        }
+        .sidebar {
+            background-color: #202830;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            margin-top: 20px;
+            width: 250px;
+            margin-right: 50px; /* Move sidebar further to the left */
+        }
+        .sidebar h3, .sidebar h4 {
+            color: #e0e0e0;
+        }
+        .sidebar button {
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="{% static 'js/badgeColor.js' %}"></script> <!-- Include the new JavaScript file -->
+</head>
 <div style="display: flex;">
     <!-- Sidebar Filter Form (far left) -->
-    <div style="width: 200px; margin-right: 30px;">
+    <div class="sidebar">
         <h3>Search Results</h3>
         <hr>
-        <h4>Filters</h4>
+        <h4>Search By:</h4><br>
         <form method="GET" action="{% url 'search_user' %}">
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button type="submit" name="filter" value="all" class="animated-border-btn-purple"
-                        {% if filter_type|length == 3 %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>
+                        {% if filter_type|length == 3 and not show_all_genres %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>
                         All</button>
-                <button type="submit" name="filter" value="username" class="animated-border-btn-purple" {% if 'username' in filter_type and filter_type|length != 3 %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>
+                <button type="submit" name="filter" value="username" class="animated-border-btn-purple" {% if 'username' in filter_type and filter_type|length != 3 and not show_all_genres %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>
                     Users</button>
-                <button type="submit" name="filter" value="sample" class="animated-border-btn-purple" {% if 'sample' in filter_type and filter_type|length != 3 %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>Samples</button>
-                <button type="submit" name="filter" value="genre" class="animated-border-btn-purple" {% if 'genre' in filter_type and filter_type|length != 3 %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>Tags</button>
+                <button type="submit" name="filter" value="sample" class="animated-border-btn-purple" {% if 'sample' in filter_type and filter_type|length != 3 and not show_all_genres %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>Samples</button>
+                <button type="submit" name="filter" value="genre" class="animated-border-btn-purple" {% if 'genre' in filter_type and filter_type|length != 3 and not show_all_genres %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>Tags</button>
+                <hr>
+                <button type="submit" name="show_all_genres" value="true" class="animated-border-btn-purple" {% if show_all_genres %}style="color: #e0e0e0; border-color: #2D5E49; border-radius: 50px; background-color: #643E80;"{% endif %}>Show All Tags</button>
             </div>
             <input type="hidden" name="q" value="{{ query }}"> <!-- Preserve the search query -->
         </form>
@@ -23,7 +52,17 @@
 
     <!-- Main Content (cards layout for search results) -->
     <div style="flex-grow: 1;">
-        <div id="results-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+
+        <!-- Results Container -->
+        <div id="results-container">
+            {% if all_genres %}
+                <h3>All Genres</h3>
+                <div id="genres-container">
+                    {% for genre in all_genres %}
+                        <a href="{% url 'search_user' %}?q={{ genre.genreName }}&filter=genre" class="badge">{{ genre.genreName }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
             <!-- User Results -->
             {% if users %}
                 <h3>Users</h3>
