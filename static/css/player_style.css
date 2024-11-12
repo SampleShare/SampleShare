@@ -92,7 +92,7 @@
   margin-left: 20px;
 }
 
-.play-button {
+.play-button, .comment-play-button {
   background-color: #362d4b;
   color: #00ffcc;
   border: none;
@@ -107,30 +107,30 @@
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
-.play-button:hover {
+.play-button:hover, .comment-play-button:hover{
   box-shadow: 0 0 10px 4px rgba(106, 27, 154, 0.6), 0 0 20px rgba(106, 27, 154, 0.4);
   transform: scale(1.1);
   background-color: #1e232e;
 }
 
-.play-button i {
+.play-button i , .comment-play-button i{
   transition: transform 0.2s;
 }
 
-.player-container {
+.player-container, .comment-player-container {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
 }
 
-.waveform {
+.waveform, .comment-waveform{
   height: 50px;
   margin-left: 10px;
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
-.waveform:hover {
+.waveform:hover, .comment-waveform:hover {
   box-shadow: 0 0 10px 4px rgba(106, 27, 154, 0.6), 0 0 20px rgba(106, 27, 154, 0.4);
   transform: scale(1.0);
 }

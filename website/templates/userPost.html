@@ -1,14 +1,42 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<br/>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{% static 'css/player_style.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/post_comment_style.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/custom_style.css' %}"/>
+  <body>
 <div class="card">
     <div class="card-header"><strong>
-        <a href ="{% url 'profile' user_post.userProfiles.user.username %}">
+      <div class="post-profile-info">
+        <div class="post-profile-pic">
+          <a href ="{% url 'profile' user_post.userProfiles.user.username %}">
         <img src="{{ user_post.userProfiles.userPhoto.url }}" alt="Profile Photo" style="width:30px; height:30px; border-radius: 50%;">
-        {{ user_post.userProfiles.user.username }} </a>
-          </strong>
+          </a>
+        </div>
+      <div class ="post-user-name">
+        <a href ="{% url 'profile' user_post.userProfiles.user.username %}">
+          {{ user_post.userProfiles.user.username }}
+        </a>
+        </div>
+      </div>    
+      </strong>
+
+ <!------ Edit Button Drop Down------>
+{% if user.userprofile.id == user_post.userProfiles.id %}
+<div class="dropdown">
+    <button class="btn dropdown-toggle post-drop-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class =" fa-solid fa-pencil"></i>    
+    </button>
+    <ul class="dropdown-menu">
+    <li><a href="{% url 'update_post' user_post.id %}" class="btn btn-secondary">Edit Post</a>
+        <br/>
+    <li><a href="{% url 'delete_post' user_post.id %}" onclick="return confirm('Are you sure you want to delete this post?');"class="btn btn-danger">Delete</a>
+    </ul>
+</div>
+<br/><br/>
+{% endif %}
+<!--------------------------------->
     </div>
     <div class="card-body">
 
@@ -16,43 +44,57 @@
     <strong>Text: </strong>{{ user_post.postText }}
     <br/>
     <strong>Sample: </strong>{{ user_post.samples.sampleName }}
-    </p> 
+    </p>
+    {% for sample in post_samples %} 
     <div class="player-container"> 
-        <button onclick="playPause('{{ user_post.samples.audioFile.url }}')" id="playBtn" class="btn btn-primary"> Play </button>
-      </div>
+        <!-- Player buttons -->
+          <button class="play-button">
+            <i class="fa-solid fa-play"></i>
+          </button>
+        <div id="waveform-{{ forloop.counter }}" class="waveform"></div>
+        <input type="hidden" class="sample-url" value="{{ sample.samples.audioFile.url }}">
       <br/>
+      </div>
+      {% endfor %}
     <!-- Download Code -->
-     <p>
-        <a href="{% url 'download_sample' user_post.samples.id %}" class="btn btn-primary">Download Sample</a>
-     </p>
+        <a href="{% url 'download_sample' user_post.samples.id %}" class="btn download-btn">
+          <i class="fa-solid fa-download"></i>
+        </a>
      <!-- End of Download Code -->
 
 
 </div>
 </div>
-{% if user.userprofile.id == user_post.userProfiles.id %}
-<br/><br/>
-<a href="{% url 'delete_post' user_post.id %}" onclick="return confirm('Are you sure you want to delete this post?');"class="btn btn-danger">Delete</a>
-<a href="{% url 'update_post' user_post.id %}" class="btn btn-secondary">Update</a>
-{% endif %}
-<a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
-<a href="{% url 'create_comment' user_post.id %}" class="btn btn-primary"> Make A Comment</a>
+<div class="back-comment-like-buttons">
+<a href="{% url 'home' %}" class="btn btn-secondary back-btn">Back</a>
+<a href="{% url 'create_comment' user_post.id %}" class="btn btn-primary make-comment-btn animated-border-btn"> Make A Comment</a>
 
 
 <!------------------- Like Code --------------------->
 <form action = "{% url 'like_post' user_post.id %}" method="POST">
+  <div class="card">
+  <div class="like-container">
     {% csrf_token %}
 
     {% if liked %}
-    <button type="submit", name="post_id", value="{{ user_post.id }}", class="btn btn-danger btn-sm">Unlike</button>
+    <button type="submit", name="post_id", value="{{ user_post.id }}", class="btn like-unlike-btn">
+      <i class="fa-solid fa-thumbs-up"></i>
+    </button>
+    
     {% else %}
-    <button type="submit", name="post_id", value="{{ user_post.id }}", class="btn btn-primary btn-sm">Like</button>
-
+    <button type="submit", name="post_id", value="{{ user_post.id }}", class="btn  like-unlike-btn">
+      <i class="fa-regular fa-thumbs-up"></i>
+    </button>
     {% endif %}
-    - {{total_likes }} Likes
+    <div class="like-number">
+    {{ total_likes }}
+    </div>
+  </div>
+</div>
+</div>
 </form>
 <!------------------- End of Like Code --------------------->
-
+<br/>
 <!-- COMMENT SECTION -->
 <div class="card">
     <div class="card-header"><strong>
@@ -63,35 +105,74 @@
 
    
     <!-- Comment Display Code -->
+    <ul class="list-group">
     {% if comments %}
     {% for comment in comments %}
-    <a href ="{% url 'profile' comment.userProfile.user.username %}" class = "link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-        <img src="{{ comment.userProfile.userPhoto.url }}" alt="Profile Photo" style="width:30px; height:30px; border-radius: 50%;">
-        {{ comment.userProfile.user.username }} 
-    </a>
+    <li class="list-group-item">
+      <div class="comment-profile-info">
+        <div class="comment-profile-pic">
+          <a href ="{% url 'profile' comment.userProfile.user.username %}" class = "link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+            <img src="{{ comment.userProfile.userPhoto.url }}" alt="Profile Photo" style="width:30px; height:30px; border-radius: 50%;">
+          </a>
+        </div>
+      <div class="comment-user-name">
+        <a href ="{% url 'profile' comment.userProfile.user.username %}">
+          {{ comment.userProfile.user.username }}  
+        </a> 
+      </div>
+    
+  </div>
+    <!----------------- Comment Dropdown ------------------>
+        {% if user.userprofile.id == comment.userProfile.id %}
+        <div class="dropdown">
+            <button class="btn dropdown-toggle comment-btn-dropdown btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-pencil"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a href="{% url 'update_comment' comment.id %}" class="btn btn-secondary btn-sm">Edit Comment</a></li>
+              <li><a href="{% url 'delete_comment' comment.id %}" onclick="return confirm('Are you sure you want to delete this comment?');"class="btn btn-danger btn-sm">Delete Comment</a></li>
+            </ul>
+          </div>
+        {% endif %}
+        <!---------------------------------------------------->
         <p> {{ comment.commentMessage }}</p>
         {% if comment.samples != None %}
-        <p>{{ comment.samples.sampleName }}
+        <!--{{ comment_samples }}-->
+          <strong>Sample:</strong> {{ comment.samples.sampleName }}
             <!-- Download Code -->
-            <p>
-                <a href="{% url 'download_sample' comment.samples.id %}" class="btn btn-primary">Download Sample</a>
-            </p>
+                <a href="{% url 'download_sample' comment.samples.id %}" class="btn download-btn-comment">
+                  <i class="fa-solid fa-download"></i>
+                </a>
+                <br/><br/>       
             <!-- End of Download Code --> 
-            <div class="player-container"> 
-                <button onclick="playPause('{{ comment.samples.audioFile.url }}')" id="playBtn" class="btn btn-primary"> Play </button>
-              </div>
-        </p>
+            
         {% endif %}
-        <p>
-        {% if user.userprofile.id == comment.userProfile.id %}
-        <a href="{% url 'update_comment' comment.id %}" class="btn btn-primary btn-sm">Update Comment</a>
-        <a href="{% url 'delete_comment' comment.id %}" onclick="return confirm('Are you sure you want to delete this comment?');"class="btn btn-danger btn-sm">Delete Comment</a>
-        {% endif %}
-        </p>
-
+        <div class="comment-player-container"> 
+            <!-- Player buttons -->
+             {% if comment.samples == None %}
+              <button type="button" class="comment-play-button" hidden>
+                <i class="fa-solid fa-play"></i>
+              </button>
+            {% else %}
+            <button class="comment-play-button">
+                <i class="fa-solid fa-play"></i>
+              </button>
+            {% endif %}
+            <div id="comment-waveform-{{ forloop.counter }}" class="comment-waveform"></div>
+            <input type="hidden" class="comment-sample-url" value="{{ comment.samples.audioFile.url }}">
+          <br/>
+          </div>
+    
+    <br/>
+        
+    </li>
     {% endfor %}
     {% endif %}
+</ul>
+</body>
 <!-- ----------End of Comment Section------------- -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script> -->
+<script src="https://unpkg.com/wavesurfer.js@7"></script>
 <script src="{% static 'js/sample_player.js' %}"></script>
+<script src="{% static 'js/sample_playerPC.js' %}"></script>
 {% endblock %}

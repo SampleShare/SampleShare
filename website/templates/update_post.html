@@ -11,8 +11,8 @@
 	{{ form.as_p }}
 
 <br/>
-  <button type="submit" class="btn btn-secondary">Update Post</button>
-
+  <button type="submit" class="btn btn-primary">Update Post</button>
+  <a href ="{% url 'user_post' current_post.id %}" class="btn btn-secondary">back</a>
 </form>
 
 

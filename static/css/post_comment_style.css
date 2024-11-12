@@ -1,0 +1,123 @@
+.dropdown{
+    margin-left: 0;
+    }
+
+    .post-drop-button, .comment-btn-dropdown{
+        color: #00FFCC;
+        float: right;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+    }
+
+    .post-drop-button i, .comment-btn-dropdown i{
+        color:#00FFCC;
+    }
+
+    .post-drop-button:hover, .comment-btn-dropdown:hover{
+      background-color: transparent;
+        border:none;
+        padding:0;
+    }
+
+    .post-drop-button i:hover, .comment-btn-dropdown i:hover{
+        color:#6A1B9A;
+    }
+
+    .download-btn,.download-btn-comment, .download-btn-comment:hover,.download-btn:hover{
+        float:right;
+        background-color: transparent;
+        border:none;
+        padding:0;
+    }
+
+    .download-btn i{
+      color:#00FFCC;
+      font-size: 30px;
+    }
+
+    .download-btn i:hover{
+        color: #6A1B9A;
+    }
+
+    .download-btn-comment i{
+      color: #00FFCC;
+      font-size: 30px;
+      height: 10px;
+      align-items: center;
+      justify-items:center;
+    }
+
+    .download-btn-comment i:hover {
+        color: #6A1B9A;
+    }
+
+    .download-player{
+        display: flex;
+        gap: 10px;
+    }
+    .like-unlike-btn{
+        color: #00FFCC;
+        width: 50px;
+        height: 30px;
+        font-size: 16px;
+        background-color: transparent;
+        border:none;
+        padding:0;
+        cursor: pointer;
+    }
+
+    .like-unlike-btn:hover{
+      background-color: transparent;
+        border:none;
+        padding:0;
+    }
+    .like-unlike-btn i{
+        font-size: 30px;
+    }
+
+    .like-unlike-btn i:hover{
+        color: #6A1B9A;
+    }
+    
+    .back-comment-like-buttons{
+        display: flex;
+        gap: 10px;
+    }
+    .download-sample-comments{
+        width: 50px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .like-container{
+        text-align: center;
+    }
+
+    .like-number{
+        font-size: 20px;
+        gap: 10px;
+    }
+
+    .make-comment-btn, .back-btn{
+        height: 45px;
+    }
+
+    .post-profile-info, .comment-profile-info{
+        display: flex;
+        color:#00FFCC;
+        gap:5px;
+    }
+
+    .post-user-name a, .comment-user-name a{
+        text-decoration: none;
+        color: #fff;
+        font-weight: bold;
+    }
+    .post-user-name a:hover, .comment-user-name a:hover{
+        color:#00FFCC;
+    }
+
+    
+
+    

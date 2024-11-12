@@ -10,7 +10,7 @@
         {{ form.as_p }}
         <button class="btn btn-primary" > Comment </button>
 
-        <a href ="{% url 'home'%}" class="btn btn-secondary">back</a>
+        <a href ="{% url 'user_post' current_post.id %}" class="btn btn-secondary">back</a>
     
         <script>
             var name = "{{ user.userprofile.id }}";

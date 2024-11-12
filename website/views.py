@@ -522,6 +522,9 @@ def user_post(request, pk):
     if request.user.is_authenticated:
         user_post = Post.objects.get(id=pk)
         comments = Comment.objects.filter(posts=pk)
+        post_samples = Post.objects.filter(id=pk)
+        #comment_samples = Post.objects.all.prefetch_related("userProfile","samples")
+        comment_samples = Comment.objects.filter(~Q(samples=None), posts=pk)
         likes = get_object_or_404(Post, id=pk)
         total_likes = likes.total_likes()
 
@@ -536,6 +539,8 @@ def user_post(request, pk):
                 "total_likes": total_likes,
                 "liked": liked,
                 "comments": comments,
+                "post_samples":post_samples,
+                "comment_samples":comment_samples,
             },
         )
     else:
@@ -572,7 +577,7 @@ def update_post(request, pk):
                 add_post = form.save()
                 messages.success(request, "Post Updated...")
                 return redirect("user_post", current_post.id)
-        return render(request, "update_post.html", {"form": form})
+        return render(request, "update_post.html", {"form": form, "current_post":current_post})
     else:
         messages.success(request, "Your Must Be Logged In...")
         return redirect("home")
@@ -670,6 +675,7 @@ def update_comment(request, pk):
     if request.user.is_authenticated:
         userProfile_id = request.user.userprofile
         current_comment = Comment.objects.get(id=pk)
+        current_post = current_comment.posts.id
         form = CommentForm(
             request.POST or None,
             userProfile_id=userProfile_id,
@@ -680,7 +686,7 @@ def update_comment(request, pk):
                 add_comment = form.save()
                 messages.success(request, "Comment Updated...")
                 return redirect("user_post", current_comment.posts.id)
-        return render(request, "update_comment.html", {"form": form})
+        return render(request, "update_comment.html", {"form": form, "current_post": current_post})
     else:
         messages.success(request, "Your Must Be Logged In...")
         return redirect("home")
